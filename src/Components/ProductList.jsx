@@ -1,7 +1,12 @@
 import React from 'react';
 import './ProductList.css'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { addItemToCart, removeItemFromCart } from './CartSlice';
 
 const ProductList = () => {
+
+  const dispatch  = useDispatch();
+  const cartItems = useSelector(state => state.cart.cartItems);
 
   const products = [
     { id: 1, name: 'Product A', price: 60 },
@@ -13,7 +18,21 @@ const ProductList = () => {
     <div className="product-list">
       <h2 className="product-list-title">Products</h2>
       <ul className="product-list-items">
-     
+        {
+          products.map(product => (
+            <li key={product.id} className="product-list-item">
+              <h3>{product.name}</h3>
+              <p>{product.price}</p>
+              <button
+                className={`add-to-cart-btn ${cartItems.some(item => item.id === product.id) ? 'disabled' : ''}`}
+                onClick={() => dispatch(addItemToCart(product))}
+                disabled={cartItems.some(item => item.id === product.id)} // Disable if already in cart
+              >
+                {cartItems.some(item => item.id === product.id) ? 'Added' : 'Add to Cart'}
+              </button>
+            </li>
+          ))
+        }
       </ul>
     </div>
   );
